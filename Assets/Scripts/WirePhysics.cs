@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class WirePhysics : MonoBehaviour
@@ -22,36 +23,40 @@ public class WirePhysics : MonoBehaviour
 
     public void GenerateWire()
     {
-        wirePoints = new List<GameObject>(length);
         // Destroy old wire, all children objects
         foreach (GameObject child in transform)
         {
             Destroy(child);
             wirePoints.Remove(child);
         }
-        // Generate Start (Player)
+        wirePoints = new List<GameObject>(length);
         // Generate wire points
         for (int i = 0; i < length; i++)
         {
-            wirePoints.Add(Instantiate(wirePointPrefab, transform));
+            if (i == length - 1)
+            {
+                wirePoints.Add(Instantiate(endPrefab, transform));
+            }
+            else
+            {
+                wirePoints.Add(Instantiate(wirePointPrefab, transform));
+            }
             wirePoints[i].transform.parent = transform;
             wirePoints[i].name = "WirePoint" + i;
             wirePoints[i].transform.localPosition = new Vector3(0, i * yOffset, 0);
             //Add configurable joint
+            ConfigurableJoint cj = wirePoints[i].AddComponent<ConfigurableJoint>();
+            
             if (i > 0)
             {
-                ConfigurableJoint cj = wirePoints[i].AddComponent<ConfigurableJoint>();
                 ConfigureJoint(cj, wirePoints[i - 1].GetComponent<Rigidbody>());
             }
+            else
+            {
+                ConfigureJoint(cj, startPrefab.GetComponent<Rigidbody>());
+            }
         }
-        // Generate End (Plug)
     }
-
-    void Start()
-    {
-        GenerateWire();
-    }
-
 
     //https://www.youtube.com/watch?v=Psq8rICishw&t
     public void ConfigureJoint(ConfigurableJoint j, Rigidbody c)
@@ -70,5 +75,31 @@ public class WirePhysics : MonoBehaviour
         j.enableCollision = true;
         j.enablePreprocessing = false;
         j.connectedBody = c;
+    }
+
+    public void HingeJoint(HingeJoint j, Rigidbody c)
+    {
+        j.axis = new Vector3(0f, 0f, 1f);
+        j.useSpring = true;
+        j.spring = new JointSpring { spring = 1f, damper = 1f};
+
+        j.enableCollision = true;
+        j.enablePreprocessing = false;
+        j.connectedBody = c;
+    }
+}
+
+[CustomEditor(typeof(WirePhysics))]
+public class WireEditor : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        base.OnInspectorGUI();
+        WirePhysics wire = (WirePhysics)target;
+
+        if (GUILayout.Button("Generate Wire"))
+        {
+            wire.GenerateWire();
+        }
     }
 }

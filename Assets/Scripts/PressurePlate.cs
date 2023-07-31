@@ -6,6 +6,12 @@ public class PressurePlate : MonoBehaviour
 {
     private float height;
 
+    enum PlateType
+    {
+        Wall,
+        Floor,
+    }
+
     void Start()
     {
         height = 0.1057129f; // use Renderer bounds? / height of the plate, change to find this instead of set value

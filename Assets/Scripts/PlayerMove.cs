@@ -45,6 +45,7 @@ public class PlayerMove : MonoBehaviour
     {
         if (Time.timeScale == 0) return; // This stops the player from moving when the game is paused
         Move();
+        Look();
     }
 
     public void MoveInput(Vector2 direction)
@@ -59,16 +60,25 @@ public class PlayerMove : MonoBehaviour
     private void Move()
     {
         rigidPlayer.AddForce(moveDirection.normalized * speed, ForceMode.Impulse); // Add the force to move the player
+        /*
         if (moveDirection != Vector3.zero)
         {
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(moveDirection), rotateSpeed); // Start to rotate in the direction of movement at the speed of rotation 
         }
+        */
     }
 
     private void Look()
     {
         // Look in mouse direction / right stick direction
-        
+        Ray rayFromCameraToCursor = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane playerPlane = new Plane(Vector3.up, transform.position);
+        playerPlane.Raycast(rayFromCameraToCursor, out float distanceFromCamera);
+        Vector3 cursorPostition = rayFromCameraToCursor.GetPoint(distanceFromCamera);
+
+        Vector3 LookatPosition = cursorPostition;
+
+        transform.LookAt(LookatPosition);
     }
 
 }
