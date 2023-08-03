@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: carbody2
+  m_Name: carfrontbumper2 1
   m_Shader: {fileID: 47, guid: 0000000000000000f000000000000000, type: 0}
   m_ValidKeywords:
   - _METALLICGLOSSMAP
@@ -25,7 +25,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 58220320d487a5545875ab287d9d6d65, type: 3}
+        m_Texture: {fileID: 2800000, guid: 2f53b0667b95cea429f13471f5e02209, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -45,11 +45,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: c19b37e42f8e74843ab8fd0203487107, type: 3}
+        m_Texture: {fileID: 2800000, guid: ccd28f3e5dc8ca546922ccf1bcebb839, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 2800000, guid: 69f217112c8eea94a9c1397a16aa7423, type: 3}
+        m_Texture: {fileID: 2800000, guid: fdb3264797221c5438011ebfeff870aa, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
@@ -57,11 +57,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 2800000, guid: 3e4fe8a83da76f645bcb14dac73c58b0, type: 3}
+        m_Texture: {fileID: 2800000, guid: e7ae3d578704d2a41835230bc7cd9a87, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
-        m_Texture: {fileID: 2800000, guid: b892d6f997085bf4397d706bd71ea88a, type: 3}
+        m_Texture: {fileID: 2800000, guid: 300209eb1e3e46047b63d03373f7a0c3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
