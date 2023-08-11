@@ -8,8 +8,10 @@ public class StealthAI : BaseAI
     [SerializeField] ChaseWire chaseWire;
     [SerializeField] RunAway runAway;
 
+    GameObject player;
     Plug playerPlug;
     LineOfSight playerLineOfSight;
+    LineOfSight aiLineOfSight;
 
     bool runningAway = false;
     bool active = false;
@@ -19,20 +21,27 @@ public class StealthAI : BaseAI
     }
 
     private void FindPlayer()
-    {
-        playerLineOfSight = FindObjectOfType<LineOfSight>();
-        if (playerLineOfSight == null)
-            throw new Exception("Player Line of Sight not found.");
+    { 
         playerPlug = FindObjectOfType<Plug>();
         if (playerPlug == null)
             throw new Exception("Player not found.");
 
+        player = playerPlug.transform.root.GetChild(0).gameObject;
+
         chaseWire.SetWire = playerPlug.transform;
-        runAway.SetPlayer = playerPlug.transform.root;
+        runAway.SetPlayer = player.transform;
+
+        playerLineOfSight = player.GetComponentInChildren<LineOfSight>();
+        if (playerLineOfSight == null)
+            throw new Exception("Player Line of Sight not found.");
+
+        aiLineOfSight = GetComponentInChildren<LineOfSight>();
+        if (aiLineOfSight == null)
+            throw new Exception("AI Line of Sight not found.");
     }
     private void TryActivate()
     {
-        if (Plug.isAttached)
+        if (Plug.isAttached && aiLineOfSight.Objs.Count >= 1)
             active = true;
         else if (PlayerIsLooking())
         {
@@ -42,7 +51,7 @@ public class StealthAI : BaseAI
     }
     private void TryDeactivate()
     {
-        if (!Plug.isAttached)
+        if (!Plug.isAttached || aiLineOfSight.Objs.Count == 0)
         {
             active = false;
 
@@ -81,7 +90,7 @@ public class StealthAI : BaseAI
 
     private bool PlayerIsLooking()
     {
-        if (playerLineOfSight.InSight(gameObject))
+        if (playerLineOfSight.Objs.Contains(gameObject))
         {
             return true;
         }

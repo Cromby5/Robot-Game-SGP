@@ -1,32 +1,19 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
-public class Interactable : MonoBehaviour
+public class IButton : AddDelegate
 {
-    public enum InteractableType
-    {
-        Button = 0,
-        PressurePlate = 1,
-        Lever = 2
-    }
+    [Header("Interactable")]
 
     bool active = false;
 
-    [SerializeField] private InteractableType interactableType;
+    // Collision Effects
     private void OnTriggerEnter(Collider other)
     {
         if (active)
             return;
-        switch (interactableType)
-        {
-            case InteractableType.Button:
-                ButtonEffect(other);
-                break;
-            case InteractableType.PressurePlate:
-                PressurePlateEffect(other);
-                break;
-        }
+        ButtonEffect(other);
+
+        CallDelegate();
     }
 
     void ButtonEffect(Collider hit)
@@ -37,20 +24,12 @@ public class Interactable : MonoBehaviour
             StartCoroutine(ActivateButton());
         }
     }
-    void PressurePlateEffect(Collider hit)
-    {
-        if (hit.tag.Equals("Player"))
-        {
-            GetComponent<MeshRenderer>().enabled = false;
-            Debug.Log("Player On PressurePlate");
-        }
-    }
     IEnumerator ActivateButton()
     {
         Debug.Log("Button Activated");
         float startScale = transform.localScale.z;
         float totalTime = .5f;
-        for (float time = 0; time < totalTime; time+= Time.deltaTime)
+        for (float time = 0; time < totalTime; time += Time.deltaTime)
         {
             transform.localScale = new Vector3(transform.localScale.x, transform.localScale.y, Mathf.Lerp(startScale, startScale * .25f, time / totalTime));
             yield return new WaitForFixedUpdate();

@@ -35,7 +35,13 @@ public class ChaseWire : BaseAIBehaviour
     {
         Vector3 moveDirection = wire.position - transform.position;
         aiRb.AddForce(moveDirection.normalized * moveSpeed, ForceMode.Impulse);
-
         aiRb.velocity = Vector3.ClampMagnitude(aiRb.velocity, moveSpeed);
+
+        // Calculate the rotation to look in the direction of travel only on the y-axis (yaw)
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(moveDirection.x, 0, moveDirection.z));
+
+        // Apply the rotation to the object
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
+
     }
 }

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// TODO: REMOVE IF LAG
+[ExecuteInEditMode]
 public class LineOfSight : MonoBehaviour
 {
     [Header("Setup")]
@@ -15,6 +17,8 @@ public class LineOfSight : MonoBehaviour
     [Header("Layers")]
     [SerializeField] LayerMask targetLayers;
     [SerializeField] LayerMask blockLayers;
+    [SerializeField] bool drawLOS = false;
+    [SerializeField] bool drawHit = false;
 
     private int count;
     private float scanInterval;
@@ -48,7 +52,7 @@ public class LineOfSight : MonoBehaviour
             Scan();
         }
     }
-    public bool InSight(GameObject obj)
+    private bool InSight(GameObject obj)
     {
         Vector3 origin = transform.position;
         Vector3 destination = obj.transform.position;
@@ -188,36 +192,37 @@ public class LineOfSight : MonoBehaviour
     private void OnDrawGizmos()
     {
         // If we have generated the mesh
-        if (Sensor)
+        if (Sensor && drawLOS)
         {
             // Draw mesh
             Gizmos.color = sensorColour;
             Gizmos.DrawMesh(Sensor, transform.position, transform.rotation);
         }
 
-        /*
-        // Render all spheres nearby
-        Gizmos.color = Color.red;
-           Gizmos.DrawWireSphere(transform.position, distance);
-           for (int i = 0; i < count; ++i)
-           {
-               Gizmos.DrawSphere(colliders[i].transform.position, 1.0f);
-           }
-
-           Gizmos.color = sensorColour;
-
-        // Render Spheres at all objects within Line of Sight.
-        objs.RemoveAll(s => s == null);
-        foreach (var Object in objs)
+        if (drawHit)
         {
-            if (Object == null)
+            // Render all spheres nearby
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, distance);
+            for (int i = 0; i < count; ++i)
             {
-                objs.Remove(Object);
-                continue;
+                Gizmos.DrawSphere(colliders[i].transform.position, 1.0f);
             }
-          
-            Gizmos.DrawSphere(Object.transform.position, 1.0f);
+
+            Gizmos.color = sensorColour;
+
+            // Render Spheres at all objects within Line of Sight.
+            objs.RemoveAll(s => s == null);
+            foreach (var Object in objs)
+            {
+                if (Object == null)
+                {
+                    objs.Remove(Object);
+                    continue;
+                }
+
+                Gizmos.DrawSphere(Object.transform.position, 1.0f);
+            }
         }
-        */
     }
 }
