@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using UnityEditor;
 using UnityEngine;
 
@@ -145,7 +146,21 @@ public class WirePhysics : MonoBehaviour
         wirePoints.RemoveAt(0);
         //top = newTop;
     }
+    /*
+    private void DistanceCheck()
+    {
+        RopeSegment first = nodes[0];
+        RopeSegment last = nodes[segmentLength - 1];
 
+        float distance = Vector3.Distance(first.currPos, last.currPos);
+        if (distance > 0 && distance > segmentLength * nodeLength)
+        {
+            Vector3 dir = (last.currPos - first.currPos).normalized;
+            last.currPos = first.currPos + segmentLength * nodeLength * dir;
+            endPoint.position = last.currPos;
+        }
+    }
+    */
     //https://www.youtube.com/watch?v=Psq8rICishw&t
     public void ConfigureJointSet(ConfigurableJoint j, Rigidbody c)
     {
@@ -176,6 +191,10 @@ public class WirePhysics : MonoBehaviour
         j.enableCollision = true;
         j.enablePreprocessing = false;
         j.connectedBody = c;
+    }
+    public void SpringJointSet(SpringJoint j, Rigidbody c)
+    {
+
     }
 }
 

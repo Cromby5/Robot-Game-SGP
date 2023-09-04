@@ -4,7 +4,21 @@ using UnityEngine;
 
 public class VerletRope : MonoBehaviour
 {
-
+    // Collision Stuff
+    // Maximum total number of colliders that the rope can touch.
+    private const int MAX_ROPE_COLLISIONS = 32;
+    // Collision radius around each node.  Set it high to avoid tunneling.
+    private const float COLLISION_RADIUS = 0.5f;
+    // Collider buffer size; the maximum number of colliders that a single node can touch at once.
+    private const int COLLIDER_BUFFER_SIZE = 8;
+    
+    private CollisionInfo[] collisionInfos;
+    private Collider[] colliderBuffer;
+    private bool shouldSnapshotCollision;
+    public float collisionRadius = .5f;
+    private int numCollisions;
+    
+    // 
     private LineRenderer lineRenderer;
     private List<RopeSegment> nodes = new List<RopeSegment>();
     [SerializeField] private float nodeLength = 0.25f; // length between each point
@@ -16,7 +30,20 @@ public class VerletRope : MonoBehaviour
     [SerializeField] private float maxDistanceBetweenPoints;
 
     private Vector3 forceGravity = new Vector3(0f, -1f, 0f);
-    
+
+    private void Awake()
+    {
+        collisionInfos = new CollisionInfo[MAX_ROPE_COLLISIONS];
+        for (int i = 0; i < collisionInfos.Length; i++)
+        {
+            // Each collider can collide with as many nodes as are in the rope.
+            collisionInfos[i] = new CollisionInfo(segmentLength);
+        }
+
+        // Buffer for `OverlapCircleNonAlloc`.
+        colliderBuffer = new Collider[COLLIDER_BUFFER_SIZE];
+    }
+
     void Start()
     {
         lineRenderer = GetComponent<LineRenderer>();
@@ -31,26 +58,27 @@ public class VerletRope : MonoBehaviour
 
     void Update()
     {
+        if (shouldSnapshotCollision)
+        {
+            SnapshotCollisions();
+        }
         DrawRope();
     }
 
     private void FixedUpdate()
     {
         Simulate();
-
-        for (int i = 0; i < 60; i++)
+        shouldSnapshotCollision = true;
+        for (int i = 0; i < 80; i++)
         {
             ApplyConstraint();
+            AdjustCollisions();
             DistanceCheck();
-            if (i % 2 == 1)
-                CollisionCheck();
         }
-       
     }
 
     private void Simulate()
     {
-        
         for (int i = 0; i < segmentLength; i++)
         {
             RopeSegment firstSegment = nodes[i];
@@ -59,22 +87,163 @@ public class VerletRope : MonoBehaviour
             
             firstSegment.currPos += velocity;
             firstSegment.currPos += forceGravity * Time.deltaTime;
-            nodes[i] = firstSegment;
-
-            // start collision here? start from direction line 79
-            
+            nodes[i] = firstSegment;            
         }
     }
-    private void CollisionCheck()
-    {
 
+    private void SnapshotCollisions()
+    {
+        numCollisions = 0;
+        // Loop through each node and get collisions within a radius.
+        for (int i = 0; i < segmentLength; i++)
+        {
+            int collisions =
+                Physics.OverlapSphereNonAlloc(nodes[i].currPos, collisionRadius, colliderBuffer);
+
+            for (int j = 0; j < collisions; j++)
+            {
+                Collider col = colliderBuffer[j];
+                int id = col.GetInstanceID();
+
+                // Check if we already have this collider in our collisionInfos.
+                int idx = -1;
+                for (int k = 0; k < numCollisions; k++)
+                {
+                    if (collisionInfos[k].id == id)
+                    {
+                        idx = k;
+                        break;
+                    }
+                }
+                // If we didn't have the collider, we need to add it.
+                if (idx < 0)
+                {
+                    // Record all the data we need to use into our class.
+                    CollisionInfo ci = collisionInfos[numCollisions];
+                    ci.id = id;
+                    ci.wtl = col.transform.worldToLocalMatrix;
+                    ci.ltw = col.transform.localToWorldMatrix;
+                    ci.scale.x = ci.ltw.GetColumn(0).magnitude;
+                    ci.scale.y = ci.ltw.GetColumn(1).magnitude;
+                    ci.position = col.transform.position;
+                    ci.numCollisions = 1;	// 1 collision, this one.
+                    ci.collidingNodes[0] = i;
+                    switch (col)
+                    {
+                        case SphereCollider c:
+                            ci.colliderType = ColliderType.Sphere;
+                            ci.colliderSize.x = ci.colliderSize.y = c.radius;
+                            break;
+                        case BoxCollider b:
+                            ci.colliderType = ColliderType.Box;
+                            ci.colliderSize = b.size;
+                            break;
+                        default:
+                            ci.colliderType = ColliderType.None;
+                            break;
+                    }
+                    numCollisions++;
+                    if (numCollisions >= MAX_ROPE_COLLISIONS)
+                    {
+                        return;
+                    }
+                    // If we found the collider, then we just have to increment collisions and add our node.
+                }
+                else
+                {
+                    CollisionInfo ci = collisionInfos[idx];
+                    if (ci.numCollisions >= segmentLength)
+                    {
+                        continue;
+                    }
+                    ci.collidingNodes[ci.numCollisions++] = i;
+                }
+            }
+        }
+        shouldSnapshotCollision = false;
+    }
+    private void AdjustCollisions()
+    {
+        for (int i = 0; i < numCollisions; i++)
+        {
+            CollisionInfo ci = collisionInfos[i];
+
+            switch (ci.colliderType)
+            {
+                case ColliderType.Sphere:
+                    {
+                        float radius = ci.colliderSize.x * Mathf.Max(ci.scale.x, ci.scale.y);
+
+                        for (int j = 0; j < ci.numCollisions; j++)
+                        {
+                            RopeSegment node = nodes[ci.collidingNodes[j]];
+                            float distance = Vector3.Distance(ci.position, node.currPos);
+
+                            // Early out if we're not colliding.
+                            if (distance - radius > 0)
+                            {
+                                continue;
+                            }
+
+                            // Push point outside circle.
+                            Vector3 dir = (node.currPos - ci.position).normalized;
+                            Vector3 hitPos = ci.position + dir * radius;
+                            node.currPos = hitPos;
+                        }
+                    }
+                    break;
+
+                case ColliderType.Box:
+                    {
+                        for (int j = 0; j < ci.numCollisions; j++)
+                        {
+                            RopeSegment node = nodes[ci.collidingNodes[j]];
+                            Vector3 localPoint = ci.wtl.MultiplyPoint(node.currPos);
+
+                            // If distance from center is more than box "radius", then we can't be colliding.
+                            Vector3 half = ci.colliderSize * .5f;
+                            Vector3 scalar = ci.scale;
+                            float dx = localPoint.x;
+                            float px = half.x - Mathf.Abs(dx);
+                            if (px <= 0)
+                            {
+                                continue;
+                            }
+
+                            float dy = localPoint.y;
+                            float py = half.y - Mathf.Abs(dy);
+                            if (py <= 0)
+                            {
+                                continue;
+                            }
+
+                            // Push node out along closest edge.
+                            // Need to multiply distance by scale or we'll mess up on scaled box corners.
+                            if (px * scalar.x < py * scalar.y)
+                            {
+                                float sx = Mathf.Sign(dx);
+                                localPoint.x = half.x * sx;
+                            }
+                            else
+                            {
+                                float sy = Mathf.Sign(dy);
+                                localPoint.y = half.y * sy;
+                            }
+
+                            Vector3 hitPos = ci.ltw.MultiplyPoint(localPoint);
+                            node.currPos = hitPos;
+                        }
+                    }
+                    break;
+            }
+        }
     }
 
     private void DistanceCheck()
     {
         RopeSegment first = nodes[0];
         RopeSegment last = nodes[segmentLength - 1];
-        // Same distance calculation as above, but less optimal.
+        
         float distance = Vector3.Distance(first.currPos, last.currPos);
         if (distance > 0 && distance > segmentLength * nodeLength)
         {
@@ -182,7 +351,7 @@ public class VerletRope : MonoBehaviour
 
     enum ColliderType
     {
-        Circle,
+        Sphere,
         Box,
         None,
     }
