@@ -5,6 +5,7 @@ public class IButton : AddDelegate
 {
     [Header("Interactable")]
 
+    [SerializeField] bool deactivateAfterTime = false;
     [SerializeField] float deactivationTime = 7.5f;
 
     bool active = false;
@@ -46,7 +47,8 @@ public class IButton : AddDelegate
 
         CallDelegate();
 
-        StartCoroutine(DeActivateButton(deactivationTime));
+        if (deactivateAfterTime)
+            StartCoroutine(DeActivateButton(deactivationTime));
     }
 
     IEnumerator DeActivateButton(float delayTime)
