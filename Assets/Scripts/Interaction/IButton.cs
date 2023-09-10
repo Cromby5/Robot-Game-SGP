@@ -25,7 +25,7 @@ public class IButton : AddDelegate
 
     void ButtonEffect(Collider hit)
     {
-        if (hit.name == "Bullet(Clone)" || hit.gameObject.layer == LayerMask.NameToLayer("Player"));
+        if (hit.name == "Bullet(Clone)" || hit.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             active = true;
             StartCoroutine(ActivateButton());
