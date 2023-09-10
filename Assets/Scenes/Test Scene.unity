@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748171, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -11609,7 +11609,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh32650
+  m_Name: pb_Mesh65404
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -14775,22 +14775,6 @@ PrefabInstance:
       propertyPath: delegateGameObject
       value: 
       objectReference: {fileID: 2138635888}
-    - target: {fileID: 9222623738035430720, guid: 8dc5d83d6cdd9504b88b37c365432549, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.9659259
-      objectReference: {fileID: 0}
-    - target: {fileID: 9222623738035430720, guid: 8dc5d83d6cdd9504b88b37c365432549, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.258819
-      objectReference: {fileID: 0}
-    - target: {fileID: 9222623738035430720, guid: 8dc5d83d6cdd9504b88b37c365432549, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -30
-      objectReference: {fileID: 0}
-    - target: {fileID: 9222623738035430723, guid: 8dc5d83d6cdd9504b88b37c365432549, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 9222623738776800653, guid: 8dc5d83d6cdd9504b88b37c365432549, type: 3}
       propertyPath: m_Name
       value: Lever

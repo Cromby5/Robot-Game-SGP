@@ -2478,7 +2478,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 309257371}
-  m_LocalRotation: {x: 0.38268346, y: -0.000000022481217, z: 0.000000009312026, w: 0.92387956}
+  m_LocalRotation: {x: 0.38268346, y: 0.00000002248122, z: -0.000000009312027, w: 0.92387956}
   m_LocalPosition: {x: -2.77, y: 8.18, z: -4.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5463,7 +5463,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: 0.38268346, y: -0.000000022481217, z: 0.000000009312026, w: 0.92387956}
+  m_LocalRotation: {x: 0.38268346, y: 0.00000002248122, z: -0.000000009312027, w: 0.92387956}
   m_LocalPosition: {x: -2.77, y: 8.18, z: -4.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -8893,7 +8893,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh48258
+  m_Name: pb_Mesh38770
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -12054,22 +12054,6 @@ PrefabInstance:
       propertyPath: delegateGameObject
       value: 
       objectReference: {fileID: 2138635888}
-    - target: {fileID: 9222623738035430720, guid: 8dc5d83d6cdd9504b88b37c365432549, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.9659259
-      objectReference: {fileID: 0}
-    - target: {fileID: 9222623738035430720, guid: 8dc5d83d6cdd9504b88b37c365432549, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.258819
-      objectReference: {fileID: 0}
-    - target: {fileID: 9222623738035430720, guid: 8dc5d83d6cdd9504b88b37c365432549, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -30
-      objectReference: {fileID: 0}
-    - target: {fileID: 9222623738035430723, guid: 8dc5d83d6cdd9504b88b37c365432549, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 9222623738776800653, guid: 8dc5d83d6cdd9504b88b37c365432549, type: 3}
       propertyPath: m_Name
       value: Lever

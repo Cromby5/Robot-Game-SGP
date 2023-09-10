@@ -8,6 +8,11 @@ public class ILever : AddDelegate
     [SerializeField] bool flipActive;
 
     bool active = false;
+    private void Awake()
+    {
+        GetComponent<Rigidbody>().centerOfMass = transform.localPosition;
+    }
+
     private void FixedUpdate()
     {
         if (!flipActive)
